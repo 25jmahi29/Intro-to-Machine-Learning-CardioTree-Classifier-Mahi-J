@@ -46,7 +46,7 @@ from sklearn.model_selection import train_test_split
 X = df.drop("HeartDisease", axis = 1)
 y = df["HeartDisease"]
 #accuracy score is the same for each run due to a positive integer assigned to random_state
-X_train, X_test, y_train, y_test = train_test_split(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 37)
 
 
 from sklearn.tree import DecisionTreeClassifier

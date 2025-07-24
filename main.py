@@ -11,8 +11,7 @@ print("\n-----\n")
 df=pd.read_csv("heartDisease_2020_sampling.csv")
 
 print(
-    "We will be performing data analysis on this Indicators of Heart Disease Dataset. Here is a sample of it: \n"
-)
+    "We will be performing data analysis on this Indicators of Heart Disease Dataset. Here is a sample of it: \n")
 
 #Print the dataset's first five rows
 print (df.head())
@@ -22,7 +21,7 @@ input("\n Press Enter to continue.\n")
 
 #Data Cleaning
 #Label encode the dataset
-df = util.labelEncoder(df, ["HeartDisease", "GenHealth"])
+df = util.labelEncoder(df, ["HeartDisease", "GenHealth", "Smoking", "AlcoholDrinking", "AgeCategory", "PhysicalActivity"])
 
 print("\nHere is a preview of the dataset after label encoding. \n")
 print(df.head())
@@ -42,15 +41,17 @@ input("\nPress Enter to continue.\n")
 
 
 #Creates and trains Decision Tree Model
+#train test split randomly chooses data for the training and testing dataset
 from sklearn.model_selection import train_test_split
 X = df.drop("HeartDisease", axis = 1)
 y = df["HeartDisease"]
-
+#accuracy score is the same for each run due to a positive integer assigned to random_state
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 
 from sklearn.tree import DecisionTreeClassifier
-clf = DecisionTreeClassifier(max_depth = 3 )
+#balanced gives more representation to minority class, in this case, the paitents with heart disease
+clf = DecisionTreeClassifier(max_depth = 9, class_weight = "balanced")
 clf = clf.fit(X_train, y_train)
 
 
@@ -60,19 +61,25 @@ clf = clf.fit(X_train, y_train)
 test_predictions = clf.predict(X_test)
 
 from sklearn.metrics import accuracy_score
+train_predictions = clf.predict(X_train)
 test_acc = accuracy_score(y_test, test_predictions)
-
+train_acc = accuracy_score(y_train, train_predictions)
 print("The accuracy with the testing data set of the Decision Tree is: " + str(test_acc))
 
 #Prints the confusion matrix
 from sklearn.metrics import confusion_matrix
 
-
-
-
+cm = confusion_matrix(y_test, test_predictions, labels = [1,0])
+print("The confusion matrix of the tree is: ")
+print(cm)
 
 #Test the model with the training data set and prints accuracy score
 
+
+from sklearn.metrics import accuracy_score
+test_acc = accuracy_score(y_train, train_predictions)
+
+print("The accuracy with the training data set of the Decision Tree is: " + str(train_acc))
 
 
 
@@ -83,12 +90,22 @@ input("\nPress Enter to continue.\n")
 #Prints another application of Decision Trees and considerations
 print("\nBelow is another application of decision trees and considerations for using them:\n")
 
-
+##Prints how a Decision Tree can be used in another field
+print("Decision Trees can be used in a lot of different fields! Technology companies can utilize Decision Trees to find which servers are at a risk of a cyberattack. Some factors to take into consideration is that the company will need to insert vulnerable servers into the training data for the code to detect vulnerable servers in the testing data set. In addition, there needs to be a balanced dataset so the program doesn't have biases towards the majority of the dataset.")
 
 
 
 #Prints a text representation of the Decision Tree
-print("\nBelow is a text representation of how the Decision Tree makes choices:\n")
+print("\n Here is a text representation of how the Decision Tree makes choices:\n")
 input("\nPress Enter to continue.\n")
 
 util.printTree(clf, X.columns)
+
+#How to see the features of Machine Learning basing its decisions
+print("The following shows how the program weighted each category: \n")
+feature_importance = pd.DataFrame(clf.feature_importances_, index = X.columns)
+print(feature_importance)
+
+import matplotlib.pyplot as plt 
+feature_importance.plot(kind='bar', title='Feature Importance')
+plt.show()

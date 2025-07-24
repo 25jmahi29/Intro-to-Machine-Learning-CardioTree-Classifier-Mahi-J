@@ -34,7 +34,7 @@ df = util.oneHotEncoder(df, ["Sex", "Race"])
 print(
     "\nHere is a preview of the dataset after one hot encoding. This will be the dataset used for data analysis: \n"
 )
-print(df.head)
+print(df.head())
 
 input("\nPress Enter to continue.\n")
 
@@ -106,6 +106,12 @@ print("The following shows how the program weighted each category: \n")
 feature_importance = pd.DataFrame(clf.feature_importances_, index = X.columns)
 print(feature_importance)
 
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')  # Configure backend for VNC
+
+plt.figure(figsize=(12, 8))  # Set larger figure size
 feature_importance.plot(kind='bar', title='Feature Importance')
+plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better readability
+plt.tight_layout()  # Adjust layout to prevent text cutoff
 plt.show()
